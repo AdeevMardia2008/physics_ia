@@ -1,0 +1,32 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+tension = [1.9838, 2.2774, 2.5108, 2.8397, 3.1889, 3.5584, 3.9481,4.4636, 5.0108, 5.7092, 6.3260, 7.1079, 8.0777]
+a, b = 0.3047, 0.0223
+
+decay_rate = [a * np.sqrt(x) + b for x in tension]
+plt.figure(figsize=(10, 6))
+plt.scatter(tension, decay_rate, color='blue', marker='o', label='Ideal Data')
+x_curve = np.linspace(min(tension), max(tension), 100)
+y_curve = a * np.sqrt(x_curve) + b
+plt.plot(x_curve, y_curve, color='red', linestyle='-', label=f'Best fit: y = {a:.4f}√x + {b:.4f}')
+
+plt.xlabel('Tension (N)', fontsize=12)
+plt.ylabel('Decay Rate (s⁻¹)', fontsize=12)
+plt.title('Ideal Decay Rate vs. Tension', fontsize=14)
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+y_mean = np.mean(decay_rate)
+ss_total = sum((y - y_mean) ** 2 for y in decay_rate)
+ss_residual = sum((y - (a * np.sqrt(x) + b)) ** 2 for x, y in zip(tension, decay_rate))
+r_squared = 1 - (ss_residual / ss_total)
+rmse = np.sqrt(ss_residual / len(decay_rate))
+range_y = max(decay_rate) - min(decay_rate)
+nrmse = rmse / range_y
+
+print(f"R² value: {r_squared:.5f}")
+print(f"Best fit square root model: y = {a:.4f}√x + {b:.4f}")
+print(f"NRMSE: {nrmse:.5f}")
